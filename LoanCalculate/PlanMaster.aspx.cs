@@ -16,6 +16,11 @@ namespace LoanCalculate
 {
     public partial class PlanMaster : System.Web.UI.Page
     {
+        private void MsgBox(string message)
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + message + "');", true);
+        }
+        
         protected void Page_Load(object sender, EventArgs e)
         { }
 
@@ -58,16 +63,14 @@ namespace LoanCalculate
                     if (rowsAffected > 0)
                     {
                         transaction.Commit();
-                        string message = messageParameter.Value.ToString();
-                        ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + message + "');", true);
-                        
+                        MsgBox(messageParameter.Value.ToString());                        
                     }
                     else
                     {
                         transaction.Rollback();
-                        string message = messageParameter.Value.ToString();
-                        ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + message + "');", true);
+                        MsgBox(messageParameter.Value.ToString());   
                     }
+                    
                     txtROI.Text = "0";
                     txtTenure.Text = "0";
                     txtPlanName.Text = "";
@@ -78,7 +81,7 @@ namespace LoanCalculate
                     if (transaction != null)
                     {
                         transaction.Rollback();
-                        ClientScript.RegisterStartupScript(this.GetType(), "alert", $"alert({ex.Message});", true);
+                        MsgBox(ex.Message);   
                     }
                 }
             }
