@@ -17,7 +17,9 @@
                 <div class="form-group row">
                     <label for="lblPlanName" class="col-sm-4 col-form-label">Select Plan Name:</label>
                     <div class="col-sm-6">
-                        <asp:DropDownList ID="ddlPlanName" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlPlanName_SelectIndexChanged"></asp:DropDownList>
+                        <asp:DropDownList ID="ddlPlanName" runat="server" CssClass="form-control" 
+                            AutoPostBack="true" DataTextField="PlaneName" DataValueField="PlanID" 
+                            OnSelectedIndexChanged="ddlPlanName_SelectIndexChanged"></asp:DropDownList>
                     </div>
                     <label for="Label1" class="col-sm-10 col-form-label"></label>
                     <label for="lblTenure" class="col-sm-4 col-form-label">Tenure (Months):</label>
