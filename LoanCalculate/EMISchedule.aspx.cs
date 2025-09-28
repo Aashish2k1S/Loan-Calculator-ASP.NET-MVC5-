@@ -14,6 +14,10 @@ namespace LoanCalculate
 {
     public partial class EMISchedule : System.Web.UI.Page
     {
+        private void MsgBox(string message)        
+        {
+            ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + message + "');", true);
+        }
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack) PopulatePlanList();
@@ -36,22 +40,9 @@ namespace LoanCalculate
                         adapter.Fill(dt);
                     }
 
-                    if (dt.Rows.Count > 0)
-                    {
-                        ddlPlanName.DataSource = dt;
-                        ddlPlanName.DataTextField = "PlaneName";
-                        ddlPlanName.DataValueField = "PlanID";
-                        ddlPlanName.DataBind();
-                        ddlPlanName.Items.Insert(0, new ListItem("--Select Scheme--", ""));
-                    }
-                    else
-                    {
-                        ddlPlanName.DataSource = null;
-                        ddlPlanName.DataTextField = "PlaneName";
-                        ddlPlanName.DataValueField = "PlanID";
-                        ddlPlanName.DataBind();
-                        ddlPlanName.Items.Insert(0, new ListItem("--Select Scheme--", ""));
-                    }
+                    ddlPlanName.DataSource = (dt.Rows.Count > 0 ? dt : null);                   
+                    ddlPlanName.DataBind();
+                    ddlPlanName.Items.Insert(0, new ListItem("--Select Scheme--", ""));
                 }
             }
         }
@@ -91,14 +82,12 @@ namespace LoanCalculate
         {
             if (txtEMIAmount.Text == "0" || txtEMIAmount.Text == "")
             {
-                string message = "Please get the EMI amount first.";
-                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + message + "');", true);
+                MsgBox("Please get the EMI amount first.");
                 return;
             }
             else if (txtLoanDate.Text == "")
             {
-                string message = "Please choose a loan date.";
-                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + message + "');", true);
+                MsgBox("Please choose a loan date.");
                 return;
             }
             DateTime loanDate = DateTime.ParseExact(txtLoanDate.Text, "dd/MM/yyyy", CultureInfo.InvariantCulture);
@@ -143,7 +132,6 @@ namespace LoanCalculate
 
                 dt.Rows.Add(serialNumber, date, loanAmount);
             }
-
             gvLoanSchedule.DataSource = dt;
             gvLoanSchedule.DataBind();
         }
@@ -152,11 +140,17 @@ namespace LoanCalculate
         {
             if (txtEnterLoanAmount.Text == "0" || txtEMIAmount.Text == "" || Convert.ToDecimal(txtEnterLoanAmount.Text) <= 0)
             {
-                string message = "Please select a plan name and enter a valid loan amount greater than 0.";
-                ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert('" + message + "');", true);
+                MsgBox("Please select a plan name and enter a valid loan amount greater than 0.");
                 return;
             }
-            decimal EMIAmount = (Convert.ToDecimal(txtEnterLoanAmount.Text) + (Convert.ToDecimal(txtEnterLoanAmount.Text) * (Convert.ToDecimal(txtROI.Text)/100))) / Convert.ToInt64(txtTenure.Text);
+            
+            decimal 
+                LoanAmount = Convert.ToDecimal(txtEnterLoanAmount.Text),
+                ROI = Convert.ToDecimal(txtROI.Text);
+                
+            Int64 Tenure = Convert.ToInt64(txtTenure.Text);
+            
+            decimal EMIAmount = ( LoanAmount + ( LoanAmount * ( ROI/100 ) ) ) / Tenure;
             txtEMIAmount.Text = EMIAmount.ToString("0.00");
         }
 
